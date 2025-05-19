@@ -12,11 +12,14 @@
     <header class="sticky top-0 z-40 bg-white/80 backdrop-blur shadow-sm">
         <div class="max-w-3xl mx-auto px-4 py-4 flex justify-between items-center">
             <span class="text-xl font-bold text-purple-700 tracking-tight">ZenTasks</span>
-            <nav class="hidden md:flex gap-8 text-sm">
+            <nav class="hidden md:flex gap-8 text-sm items-center">
                 <a href="#tasks" class="hover:text-purple-700 transition">Tasks</a>
                 <a href="#focus" class="hover:text-purple-700 transition">Focus</a>
                 <a href="#faq" class="hover:text-purple-700 transition">FAQ</a>
                 <a href="#contact" class="hover:text-purple-700 transition">Contact</a>
+                <button id="colorBtn"
+                    class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition">Weird
+                    Color</button>
             </nav>
         </div>
     </header>
@@ -39,7 +42,7 @@
             <ul id="taskList" class="space-y-4">
                 <li class="bg-white/80 rounded-lg shadow flex items-center px-4 py-3 gap-3 animate-fade-in">
                     <input type="checkbox" class="accent-purple-600 w-5 h-5 transition-all">
-                    <span class="flex-1">Finish ZenTasks UI</span>
+                    <span class="flex-1">Finish UI</span>
                     <button class="deleteTask text-gray-400 hover:text-red-500 transition"><svg
                             xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -149,14 +152,16 @@
                 </div>
             </section>
         </section>
+        <footer class="bg-purple-800 !mb-4 rounded-xl text-white py-8">
+            <div class="max-w-3xl mx-auto px-4 text-center">
+                <p>ZenTasks -> Made for <a href="https://hackclub.com" class="hover:text-purple-200 font-bold transition">Hack
+                        Club</a>.</p>
+            </div>
+        </footer>
+        <div class="h-2 w-screen"></div>
     </main>
 
-    <footer class="bg-purple-800 text-white text-center py-4">
-        <p>© 2025 Harshit, Made for <a href="https://hackclub.com">HackClub</a>.</p>
-    </footer>
-
     <script>
-        // maybe can use an api here instead, will stick to this for now 
         const quotes = [
             "Stay positive, work hard, make it happen.",
             "You got this!",
@@ -170,16 +175,16 @@
             "Done is better than perfect."
         ];
         const quoteText = document.getElementById('quote-text');
-        document.getElementById('new-quote').onclick = () => {
+        document.getElementById('new-quote').onclick = function () {
             let idx = Math.floor(Math.random() * quotes.length);
             quoteText.textContent = quotes[idx];
         };
-        document.querySelectorAll('.faq-q').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const answer = btn.nextElementSibling;
+        document.querySelectorAll('.faq-q').forEach(function (btn) {
+            btn.onclick = function () {
+                let answer = btn.nextElementSibling;
                 answer.classList.toggle('hidden');
                 btn.querySelector('svg').classList.toggle('rotate-180');
-            });
+            }
         });
         const taskList = document.getElementById('taskList');
         const addTaskBtn = document.getElementById('addTaskBtn');
@@ -187,18 +192,19 @@
         function updateEmpty() {
             emptyState.style.display = taskList.children.length ? 'none' : 'block';
         }
-        addTaskBtn.addEventListener('click', () => {
+        addTaskBtn.onclick = function () {
             const li = document.createElement('li');
             li.className = 'bg-white/80 rounded-lg shadow flex items-center px-4 py-3 gap-3 animate-fade-in';
-            li.innerHTML = `<input type='checkbox' class='accent-purple-600 w-5 h-5 transition-all'><span class='flex-1'>New Task</span><button class='deleteTask text-gray-400 hover:text-red-500 transition'><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12'/></svg></button>`;
+            li.innerHTML = "<input type='checkbox' class='accent-purple-600 w-5 h-5 transition-all'><span class='flex-1'>New Task</span><button class='deleteTask text-gray-400 hover:text-red-500 transition'><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12'/></svg></button>";
             taskList.appendChild(li);
             updateEmpty();
-            li.querySelector('span').setAttribute('contenteditable', 'true');
-            li.querySelector('span').focus();
-            li.querySelector('.deleteTask').onclick = () => { li.remove(); updateEmpty(); };
-        });
-        document.querySelectorAll('.deleteTask').forEach(btn => {
-            btn.onclick = () => { btn.closest('li').remove(); updateEmpty(); };
+            let s = li.querySelector('span');
+            s.setAttribute('contenteditable', 'true');
+            s.focus();
+            li.querySelector('.deleteTask').onclick = function () { li.remove(); updateEmpty(); };
+        };
+        document.querySelectorAll('.deleteTask').forEach(function (btn) {
+            btn.onclick = function () { btn.closest('li').remove(); updateEmpty(); };
         });
         updateEmpty();
         let timer = 1500, interval, running = false;
@@ -206,23 +212,28 @@
         function renderTimer() {
             const m = String(Math.floor(timer / 60)).padStart(2, '0');
             const s = String(timer % 60).padStart(2, '0');
-            timerDisplay.textContent = `${m}:${s}`;
+            timerDisplay.textContent = m + ':' + s;
         }
-        document.getElementById('startFocus').onclick = () => {
+        document.getElementById('startFocus').onclick = function () {
             if (running) return;
             running = true;
-            interval = setInterval(() => {
+            interval = setInterval(function () {
                 if (timer > 0) { timer--; renderTimer(); }
                 else { clearInterval(interval); running = false; }
             }, 1000);
         };
-        document.getElementById('pauseFocus').onclick = () => {
+        document.getElementById('pauseFocus').onclick = function () {
             clearInterval(interval); running = false;
         };
-        document.getElementById('resetFocus').onclick = () => {
+        document.getElementById('resetFocus').onclick = function () {
             clearInterval(interval); running = false; timer = 1500; renderTimer();
         };
         renderTimer();
+
+        document.getElementById('colorBtn').onclick = function () {
+            let c = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+            document.body.style.background = c;
+        };
     </script>
 
     <!--Animations-->
